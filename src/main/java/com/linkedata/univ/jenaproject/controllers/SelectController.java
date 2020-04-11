@@ -2,13 +2,13 @@ package com.linkedata.univ.jenaproject.controllers;
 
 import com.linkedata.univ.jenaproject.services.QueryObject;
 import com.linkedata.univ.jenaproject.services.QueryService;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
 @RequestMapping("/select")
 public class SelectController {
     private QueryService queryService;
-
     private static String PREFIX = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" +
             "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" +
             "PREFIX foaf: <http://xmlns.com/foaf/0.1/>" +
@@ -20,7 +20,7 @@ public class SelectController {
         this.queryService = queryService;
     }
 
-    @GetMapping(value = "/query")
+    @GetMapping(value = "/query", produces = MediaType.APPLICATION_JSON_VALUE)
     public String testQuery() {
         String prefix = "PREFIX : <http://www.cs.ccsu.edu/SrilakshmiDoma/University.owl#>" +
                 "PREFIX owl: <http://www.w3.org/2002/07/owl#>" +
@@ -37,7 +37,6 @@ public class SelectController {
                                                         " ORDER BY ?First_Name\n",
                                                 QueryObject.QueryType.SELECT);
 
-        queryService.selectQuery(queryObject);
-        return "did query";
+        return queryService.selectQuery(queryObject);
     }
 }

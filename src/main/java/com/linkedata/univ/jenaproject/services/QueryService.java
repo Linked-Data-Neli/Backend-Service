@@ -7,8 +7,10 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.sparql.core.Quad;
-import org.springframework.core.io.ClassPathResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 
 /**
@@ -18,6 +20,7 @@ import java.util.Iterator;
  */
 public class QueryService {
     private InfModel infModel;
+    private Logger LOG = LoggerFactory.getLogger(QueryService.class);
 
     /**
      * Method used to build QueryService object
@@ -48,8 +51,8 @@ public class QueryService {
         // private constructor to be used by builder
     }
 
-    public void selectQuery(QueryObject queryObject) {
-        selectQuery(getQueryExecution(this.infModel, queryObject.queryString), queryObject.message);
+    public String selectQuery(QueryObject queryObject) {
+        return selectQuery(getQueryExecution(this.infModel, queryObject.queryString), queryObject.message);
     }
 
     public void constructQuery(QueryObject queryObject) {
@@ -72,15 +75,23 @@ public class QueryService {
      * Method will execute a select query and print out the resultSet
      * @param queryExecution - object used to execute the select query
      * @param question - question to print to console
+     * @return response - JSON representation of response
      */
-    private void selectQuery(QueryExecution queryExecution, String question) {
+    private String selectQuery(QueryExecution queryExecution, String question) {
+        String response = "";
         try {
             ResultSet resultSet = queryExecution.execSelect();
-            System.out.println(question);
-            System.out.println(ResultSetFormatter.asText(resultSet));
+            LOG.info(question);
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ResultSetFormatter.outputAsJSON(byteArrayOutputStream, resultSet);
+            response = new String(byteArrayOutputStream.toByteArray());
+            LOG.info(response);
+
         } finally {
             queryExecution.close();
         }
+        return response;
     }
 
     /**
