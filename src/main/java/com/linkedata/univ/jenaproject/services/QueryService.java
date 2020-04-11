@@ -8,7 +8,6 @@ import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.sparql.core.Quad;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 import java.util.Iterator;
 
@@ -30,12 +29,13 @@ public class QueryService {
 
         Model model = ModelFactory.createOntologyModel();
         try {
+            System.out.println("filepath " + queryService.getFilePath(filepath));
             model.read(queryService.getFilePath(filepath));
         } catch (Exception ex) {
             System.err.println("welp this sucks: " + ex);
         }
 
-        Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
+        Reasoner reasoner = ReasonerRegistry.getOWLMicroReasoner();
         reasoner = reasoner.bindSchema(model);
         InfModel owlSchema = ModelFactory.createInfModel(reasoner, model);
 
@@ -131,7 +131,8 @@ public class QueryService {
     }
 
     private String getFilePath(String fileName) {
-        return new ClassPathResource(fileName).getFilename();
+        return this.getClass().getClassLoader().getResource(fileName).getFile();
+//        return this.getClass().getResource(fileName).getFile();
     }
 
     private void setInfModel(InfModel infModel) {
