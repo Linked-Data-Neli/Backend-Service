@@ -14,8 +14,8 @@ public class JenaProjectApplication {
         SpringApplication.run(JenaProjectApplication.class, args);
     }
 
-    @Bean()
-    public QueryService queryService() {
-        return QueryService.buildOwlQueryService("hw2.ttl"); // insert fileName here -- add file to resources folder
-    }
+//    @Bean()
+//    public QueryService queryService() {
+//        return QueryService.buildOwlQueryService("hw2.ttl"); // insert fileName here -- add file to resources folder
+//    }
 }
