@@ -9,12 +9,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/select")
 public class SelectController {
     private QueryService queryService;
-    private static String PREFIX = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" +
-            "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" +
-            "PREFIX foaf: <http://xmlns.com/foaf/0.1/>" +
-            "PREFIX univ: <http://www.cs.ccsu.edu/~neli/university.owl#>" +
-            "PREFIX vcard: <http://www.w3.org/vcard/ns#>" +
-            "PREFIX ex: <http://example.org/>";
+    private String prefix = "PREFIX : <http://www.cs.ccsu.edu/SrilakshmiDoma/University.owl#>" +
+            "PREFIX owl: <http://www.w3.org/2002/07/owl#>" +
+            "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" +
+            "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>";
 
     public SelectController(QueryService queryService) {
         this.queryService = queryService;
@@ -22,11 +20,6 @@ public class SelectController {
 
     @GetMapping(value = "/query", produces = MediaType.APPLICATION_JSON_VALUE)
     public String testQuery() {
-        String prefix = "PREFIX : <http://www.cs.ccsu.edu/SrilakshmiDoma/University.owl#>" +
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>" +
-                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" +
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>";
-
         QueryObject queryObject = new QueryObject("Who are the students in the university?",
                                                 prefix + " SELECT ?First_Name (COUNT(?C) AS ?Course_Count)\n" +
                                                         "WHERE\n" +
@@ -36,7 +29,30 @@ public class SelectController {
                                                         "}GROUP BY ?First_Name\n" +
                                                         " ORDER BY ?First_Name\n",
                                                 QueryObject.QueryType.SELECT);
+        return queryService.selectQuery(queryObject);
+    }
 
+    @GetMapping(value = "/student-details", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String studentDetails(@RequestParam() String firstName,
+                                 @RequestParam() String lastName) {
+        QueryObject queryObject = new QueryObject("What are " + firstName + " student details",
+                                                    prefix + "SELECT ?phone ?email ?address ?gender ?age ?studentId ?advisor ?enrolled ?admissionYear ?graduationYear " +
+                                                            "WHERE " +
+                                                            "{ " +
+                                                            "?student a :Student; " +
+                                                            ":first_Name '" + firstName +"'; " +
+                                                            ":last_Name '" + lastName + "'; " +
+                                                            ":phone ?phone; " +
+                                                            ":Email_Id ?email; " +
+                                                            ":age ?age; " +
+                                                            ":address ?address; " +
+                                                            ":Gender ?gender; " +
+                                                            ":student_Id ?studentId; " +
+                                                            ":Advisor ?advisor; " +
+                                                            ":has_Enrolled_In ?enrolled; " +
+                                                            ":Year_Of_Admission ?admissionYear;"  +
+                                                            ":Year_Of_Graduation ?graduationYear" +
+                                                            "}", QueryObject.QueryType.SELECT);
         return queryService.selectQuery(queryObject);
     }
 }
