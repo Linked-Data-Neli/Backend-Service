@@ -14,4 +14,9 @@ public class QueryObject {
     public enum QueryType {
         SELECT, CONSTRUCT, DESCRIBE, ASK
     }
+
+    @Override
+    public String toString() {
+        return this.queryString;
+    }
 }

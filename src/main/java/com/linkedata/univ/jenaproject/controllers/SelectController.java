@@ -5,6 +5,9 @@ import com.linkedata.univ.jenaproject.services.QueryService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.management.Query;
+import javax.print.attribute.standard.Media;
+
 @RestController()
 @RequestMapping("/select")
 public class SelectController {
@@ -53,6 +56,25 @@ public class SelectController {
                                                             ":Year_Of_Admission ?admissionYear;"  +
                                                             ":Year_Of_Graduation ?graduationYear" +
                                                             "}", QueryObject.QueryType.SELECT);
+        return queryService.selectQuery(queryObject);
+    }
+
+    @GetMapping(value = "/course-details", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String courseDetails(@RequestParam() String courseId) {
+        var course = ":" + courseId;
+        QueryObject queryObject = new QueryObject("What are the " + course + "details?",
+                                                    prefix + "SELECT ?title ?prerequisite ?lecturerEmail ?book " +
+                                                            "WHERE { " +
+                                                             course + " a :Courses ;" +
+                                                                        ":title ?title .\n" +
+                                                            " OPTIONAL {" +
+                                                             course + " :is_Offered_By ?lecturer .\n" +
+                                                            "?lecturer :Email_Id ?lecturerEmail } " +
+                                                            "OPTIONAL { " + course + " :uses ?textBook.\n" +
+                                                            "?textBook :title ?book }" +
+                                                            "OPTIONAL { " + course + " :has_Prerequisite ?prerequisite} }",
+                                                    QueryObject.QueryType.SELECT);
+        System.out.println("QUERY STRING " + queryObject.toString());
         return queryService.selectQuery(queryObject);
     }
 }
