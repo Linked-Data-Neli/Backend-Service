@@ -77,4 +77,20 @@ public class SelectController {
         System.out.println("QUERY STRING " + queryObject.toString());
         return queryService.selectQuery(queryObject);
     }
+
+
+    @GetMapping(value = "/faculty-details", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String facultyDetails(@RequestParam() String lastName) {
+
+        QueryObject queryObject = new QueryObject("Professor " + lastName + "Teaches?",
+                prefix + "SELECT ?name " +
+                        "WHERE { " +
+                        "?Lecture rdf:type     :Teaching_Faculty;" +
+                        " :teaches ?C; " +
+                        ":last_Name '" + lastName + "' ." +
+                        "?C :title ?name.}",
+                QueryObject.QueryType.SELECT);
+        System.out.println("QUERY STRING " + queryObject.toString());
+        return queryService.selectQuery(queryObject);
+    }
 }
