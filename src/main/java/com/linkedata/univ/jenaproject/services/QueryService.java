@@ -9,14 +9,9 @@ import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.sparql.core.Quad;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResourceLoader;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
@@ -38,7 +33,7 @@ public class QueryService {
         QueryService queryService = new QueryService();
         Model model = ModelFactory.createOntologyModel();
         try {
-            model.read(queryService.getFilePath(filepath));
+            model.read(queryService.getFileInputStream(filepath), null, "TTL");
         } catch (Exception ex) {
             System.err.println("welp this sucks: " + ex);
         }
@@ -146,10 +141,8 @@ public class QueryService {
         return QueryExecutionFactory.create(QueryFactory.create(queryString), owlSchema);
     }
 
-    private String getFilePath(String fileName) {
-        var filePath = "/" + this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + fileName;
-        LOG.info("File Path: " + filePath);
-        return filePath;
+    private InputStream getFileInputStream(String fileName) throws IOException {
+      return this.getClass().getClassLoader().getResourceAsStream(fileName);
     }
 
     private void setInfModel(InfModel infModel) {
