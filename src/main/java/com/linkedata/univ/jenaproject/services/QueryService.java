@@ -9,8 +9,14 @@ import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.sparql.core.Quad;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.util.Iterator;
 
@@ -30,10 +36,10 @@ public class QueryService {
      */
     public static QueryService buildOwlQueryService(String filepath) {
         QueryService queryService = new QueryService();
-
         Model model = ModelFactory.createOntologyModel();
         try {
-            model.read(queryService.getFileInputStream(filepath));
+            var file = new ClassPathResource("univ.ttl").getFile().getPath();
+            model.read(file);
         } catch (Exception ex) {
             System.err.println("welp this sucks: " + ex);
         }
