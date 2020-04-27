@@ -107,4 +107,19 @@ public class SelectController {
                 QueryObject.QueryType.SELECT);
         return queryService.selectQuery(queryObject);
     }
+
+    @GetMapping(value = "/student-events", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String eventsVisited(@RequestParam() String firstName,
+                                 @RequestParam() String lastName) {
+        QueryObject queryObject = new QueryObject("What events did  " + firstName + " visit?",
+                prefix + "SELECT ?Attends " +
+                        "WHERE " +
+                        "{ " +
+                        "?student a :Student; " +
+                        ":first_Name '" + firstName +"'; " +
+                        ":last_Name '" + lastName + "'; " +
+                        ":has_Attends ?Attends. " +
+                        "}", QueryObject.QueryType.SELECT);
+        return queryService.selectQuery(queryObject);
+    }
 }
