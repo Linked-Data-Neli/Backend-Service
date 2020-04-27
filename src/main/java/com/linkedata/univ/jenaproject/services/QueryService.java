@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.Iterator;
 
 /**
@@ -32,8 +33,7 @@ public class QueryService {
 
         Model model = ModelFactory.createOntologyModel();
         try {
-            System.out.println("filepath " + queryService.getFilePath(filepath));
-            model.read(queryService.getFilePath(filepath));
+            model.read(queryService.getFileInputStream(filepath));
         } catch (Exception ex) {
             System.err.println("welp this sucks: " + ex);
         }
@@ -141,9 +141,8 @@ public class QueryService {
         return QueryExecutionFactory.create(QueryFactory.create(queryString), owlSchema);
     }
 
-    private String getFilePath(String fileName) {
-        return this.getClass().getClassLoader().getResource(fileName).getFile();
-//        return this.getClass().getResource(fileName).getFile();
+    private String getFileInputStream(String fileName) {
+        return this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + fileName;
     }
 
     private void setInfModel(InfModel infModel) {
