@@ -122,4 +122,20 @@ public class SelectController {
                         "}", QueryObject.QueryType.SELECT);
         return queryService.selectQuery(queryObject);
     }
+
+    @GetMapping(value = "/student-graduating", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String studentGraduating(@RequestParam() int year) {
+        QueryObject queryObject = new QueryObject("What students are graduating in" +year + " ? ",
+                prefix + "SELECT ?firstName ?lastName ?studentId ?admissionYear " +
+                        "WHERE " +
+                        "{ " +
+                        "?student a :Student; " +
+                        ":first_Name  ?firstName; " +
+                        ":last_Name  ?lastName; " +
+                        ":student_Id ?studentId; " +
+                        ":Year_Of_Graduation " + year+"; " +
+                       ":Year_Of_Admission ?admissionYear"  +
+                        "}", QueryObject.QueryType.SELECT);
+        return queryService.selectQuery(queryObject);
+    }
 }
