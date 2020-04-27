@@ -142,7 +142,9 @@ public class QueryService {
     }
 
     private String getFileInputStream(String fileName) {
-        return this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + fileName;
+        var filePath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + fileName;
+        LOG.info("File Path: " + filePath);
+        return filePath;
     }
 
     private void setInfModel(InfModel infModel) {
