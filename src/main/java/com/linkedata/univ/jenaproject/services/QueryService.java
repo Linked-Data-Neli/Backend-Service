@@ -38,8 +38,7 @@ public class QueryService {
         QueryService queryService = new QueryService();
         Model model = ModelFactory.createOntologyModel();
         try {
-            var file = new ClassPathResource("univ.ttl").getFile().getPath();
-            model.read(file);
+            model.read(queryService.getFilePath(filepath));
         } catch (Exception ex) {
             System.err.println("welp this sucks: " + ex);
         }
@@ -147,8 +146,8 @@ public class QueryService {
         return QueryExecutionFactory.create(QueryFactory.create(queryString), owlSchema);
     }
 
-    private String getFileInputStream(String fileName) {
-        var filePath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + fileName;
+    private String getFilePath(String fileName) {
+        var filePath = "/" + this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + fileName;
         LOG.info("File Path: " + filePath);
         return filePath;
     }
